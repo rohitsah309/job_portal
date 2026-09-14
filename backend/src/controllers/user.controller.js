@@ -1,6 +1,9 @@
+import { tr } from "zod/v4/locales";
+import Job from "../models/job.model.js";
 import User from "../models/user.model.js";
 import AppError from "../utils/AppError.js";
 import bcrypt from "bcrypt"
+import { success } from "zod";
 
 
 export const updateProfile = async (req, res) => {
@@ -120,5 +123,65 @@ export const changePassword = async (req, res) => {
     res.status(200).json({
         success: true,
         message: "Password changed successfully"
+    });
+};
+
+export const saveJob = async (req, res) => {
+    const {jobId} = req.params;
+
+    const job = await Job.findById(jobId);
+    
+    if (!job) {
+        throw new AppError("Job not found", 404);
+    }
+
+    if (req.user.savedJobs.includes(jobId)) {
+        throw new AppError("Job already saved", 409)
+    }
+
+    req.user.savedJobs.push(job._id);
+
+    await req.user.save();
+
+    res.status(200).json({
+        success: true,
+        message: "Job saved successfully"
+    });
+};
+
+export const removeSavedJob = async (req, res) => {
+    const { jobId} = req.params;
+
+    const jobIndex = req.user.savedJobs.findIndex(
+        id => id.toString() === jobId
+    );
+
+    if (jobIndex === -1) {
+        throw new AppError(" Job is not saved", 404);
+    }
+
+    req.user.savedJobs.splice(jobIndex, 1);
+
+    await req.user.save();
+
+    res.status(200).json({
+        success: true,
+        message: "Job removed from saved jobs"
+    });
+}
+
+export const getSavedJobs = async (req, res) => {
+    const user = await User
+        .findById(req.user._id)
+        .populate("savedJobs");
+
+    if (!user) {
+        throw new AppError("User not found", 404);
+    }
+
+    res.status(200).json({
+        success: true,
+        count: user.savedJobs.length,
+        jobs: user.savedJobs
     });
 };

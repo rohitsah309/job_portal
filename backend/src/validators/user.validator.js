@@ -33,3 +33,7 @@ export const changePasswordSchema = z.object({
         .string()
         .min(6, "New password must be at least 6 characters")
 });
+
+export const updateRoleSchema = z.object({
+    role: z.enum(["USER", "ADMIN"])
+})

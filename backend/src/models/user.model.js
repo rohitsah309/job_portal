@@ -35,7 +35,13 @@ const userSchema = new mongoose.Schema(
             type: string,
             enum: ["USER", "ADMIN"],
             default: "USER"
-        }
+        },
+        savedJobs: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Job"
+            }
+        ]
     },
 
     {

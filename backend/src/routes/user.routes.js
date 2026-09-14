@@ -1,5 +1,11 @@
 import express from "express";
-import { getMe, updateProfile, changePassword } from "../controllers/user.controller.js";
+import { getMe,
+    updateProfile,
+    changePassword,
+    saveJob,
+    removeSavedJob,
+    getSavedJobs
+} from "../controllers/user.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { changePasswordSchema, updateProfileSchema } from "../validators/user.validator.js";
@@ -25,4 +31,23 @@ router.put(
     validate(changePasswordSchema),
     asyncHandler(changePassword)
 );
+
+router.get(
+    "/jobs/saved",
+    protect,
+    asyncHandler(getSavedJobs)
+);
+
+router.post(
+    "/jobs/:jobId/save",
+    protect,
+    asyncHandler(saveJob)
+);
+
+router.delete(
+    "/jobs/:jobId/save",
+    protect,
+    asyncHandler(removeSavedJob)
+);
+
 export default router;

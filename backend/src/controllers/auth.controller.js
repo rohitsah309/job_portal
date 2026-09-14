@@ -67,7 +67,7 @@ export const login = async (req, res) => {
     );
 
     if(!isPasswordCorrect) {
-        throw AppError("Invalid email or password", 401);
+        throw new AppError("Invalid email or password", 401);
     }
 
     const token = generateToken(user._id);

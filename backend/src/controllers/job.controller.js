@@ -1,5 +1,6 @@
 import Job from "../models/job.model.js";
 import { getJobStatus } from "../utils/jobStatus.js";
+import { createJobNotification } from "../services/notification.service.js";
 import AppError from "../utils/AppError.js";
 
 export const getJobs = async (req, res) => {
@@ -121,6 +122,8 @@ export const createJob = async (req, res) => {
       ...req.body,
       status,
     });
+
+    await createJobNotification(Job);
     res.status(201).json({
       success: true,
       message: "Job created Successfully",
