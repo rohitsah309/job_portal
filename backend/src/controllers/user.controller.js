@@ -3,7 +3,7 @@ import Job from "../models/job.model.js";
 import User from "../models/user.model.js";
 import AppError from "../utils/AppError.js";
 import bcrypt from "bcrypt"
-import { success } from "zod";
+
 
 
 export const updateProfile = async (req, res) => {

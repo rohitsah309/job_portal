@@ -1,6 +1,8 @@
 import { z } from "zod"
 
 export const createJobSchema = z.object({
+    sourceId: z.string().min(1),
+
     title: z
         .string()
         .min(3, "Job title must be at least 3 characters"),
@@ -19,12 +21,12 @@ export const createJobSchema = z.object({
         .default("All india"),
     qualification: z
         .array(z.string())
-        .min(1, "At least one qualification is required"),
+        .min(0, "At least one qualification is required"),
 
     vacancies: z
         .number()
         .int("vacancies must be a whole number")
-        .min(1, "Vacancies must be at least 1"),
+        .min(0, "Vacancies cannot be negative"),
 
     ageLimit: z.object({
         min: z 
@@ -34,6 +36,7 @@ export const createJobSchema = z.object({
         max: z
             .number()
             .min(0, "Maximum age cannot be negative")
+            .nullable()
     }),
 
     salary: z
@@ -49,7 +52,7 @@ export const createJobSchema = z.object({
         .date(),
 
     notificationUrl: z
-    .url("Invalid notification URL"),
+        .url("Invalid notification URL"),
 
     applyUrl: z
         .url("Invalid apply URL"),

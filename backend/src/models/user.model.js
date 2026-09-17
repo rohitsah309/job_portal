@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
-import { email, lowercase, maxLength, minLength, string, trim } from "zod";
+
 
 const userSchema = new mongoose.Schema(
     {
         name: {
-            type: string,
+            type: String,
             required: true,
             trim: true,
             minLength: 2,
@@ -12,27 +12,27 @@ const userSchema = new mongoose.Schema(
         },
 
         email: {
-            type: string,
+            type: String,
             required: true,
             trim: true,
             unique: true,
             lowercase: true
         },
         phone: {
-            type: string,
+            type: String,
             required: true,
             unique: true,
             trim: true,
             match: [/^[6-9]\d{9}$/, "Please enter a valid 10-digit phone number"]
         },
         password: {
-            type: string,
+            type: String,
             required: true,
             minLength: 6,
             select: false
         },
         role: {
-            type: string,
+            type: String,
             enum: ["USER", "ADMIN"],
             default: "USER"
         },

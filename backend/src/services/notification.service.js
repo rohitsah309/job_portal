@@ -1,6 +1,17 @@
-import { toLowerCase } from "zod";
 import JobAlert from "../models/jobAlert.model.js";
 import Notification from "../models/notification.model.js";
+
+
+const normalizeText = (value) => {
+    return String(value || "")
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, " ");
+};
+
+const containsText = (text, search) => {
+    return normalizeText(text).includes(normalizeText(search));
+};
 
 export const createJobNotification = async (job) => {
     const alerts = await JobAlert.find({
@@ -13,20 +24,14 @@ export const createJobNotification = async (job) => {
         let matches = true;
 
         if (alert.category) {
-            if (
-                !job.category ||
-                job.category.toLowerCase() !==
-                    alert.category.toLowerCase()
-            ) {
-                match = false
+            if (!containsText(job.category, alert.category)) {
+                matches = false
             }
         }
 
         if (matches && alert.state) {
             if (
-                !job.state ||
-                job.state.toLowerCase() !==
-                    alert.category.toLowerCase()
+                !containsText(job.state, alert.state)
             ) {
                 matches = false;
             }
@@ -36,11 +41,10 @@ export const createJobNotification = async (job) => {
             const qualificationMatches = 
                 job.qualification?.some(
                     (qualification) => 
-                        qualification
-                            .toLowerCase()
-                            .includes(
-                                alert.qualification.toLowerCase()
-                            )
+                        containsText(
+                            qualification,
+                            alert.qualification
+                        )
                 );
 
 
@@ -50,15 +54,21 @@ export const createJobNotification = async (job) => {
         }
 
         if (matches && alert.keywords) {
-            const keyword = alert.keywords.toLowerCase();
+            const keyword = normalizeText(alert.keywords);
 
-            const keywordMatches = 
-                job.title?.toLowerCase().includes(keyword) ||
-                job.organization?.toLowerCase().includes(keyword);
+            const searchableaText = [
+            job.title,
+            job.category,
+            job.organization,
+            job.state,
+            ...JobAlert(job.qualification || [])
+           ]
+                .map(normalizeText)
+                .join(" ");
 
-            if (!keywordMatches) {
-                matches = false;
-            }
+           if (!searchableaText.includes(keyword)) {
+            matches = false
+           }
 
         }
 
@@ -67,18 +77,28 @@ export const createJobNotification = async (job) => {
                 user: alert.user,
                 job: job._id,
                 title: `New Job: ${job.title}`,
-                message: `A new ${job.category || ""} job matching your alert is available`
+                message: `A new ${job.category || ""} job matching your alert is available`,
 
+                isRead: false
             });
         }
     }
 
-    if (notification,length > 0) {
-        await Notification.insertMany(
-            notification,
-            {ordered: false}
-        )
+    if (notification.length === 0) {
+        return;
     }
 
+    try {
+        await Notification.insertMany(
+            notification,
+            {
+                ordered: false
+            }
+        );
+    } catch(error) {
+        if (error.code !== 11000) {
+            throw error;
+        }
+    }
 
-}
+};

@@ -7,6 +7,8 @@ import authRoutes from "./routes/auth.routes.js"
 import userRoutes from "./routes/user.routes.js";
 import adminRoutes from "./routes/admin.routes.js"
 import jobAlertRoutes from "./routes/jobAlert.routes.js";
+import notificationRoutes from "./routes/notification.routes.js"
+import jobFetcherRoutes from "./routes/jobFetcher.routes.js";
 import connectDB from "./db/db.js"
 import { errorMiddleware } from "./middleware/error.middleware.js"
 
@@ -27,8 +29,10 @@ app.get("/", (req, res) => {
 app.use("/api/jobs", jobRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
-app.use("/api/admin", adminRoutes);
 app.use("/api/user/alerts", jobAlertRoutes);
+app.use("/api/user/notifications", notificationRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/job-fetcher", jobFetcherRoutes);
 
 
 app.use(errorMiddleware);

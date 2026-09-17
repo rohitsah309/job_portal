@@ -35,7 +35,7 @@ const jobSchema = new mongoose.Schema(
     vacancies: {
       type: Number,
       required: true,
-      min: 1
+      min: 0
     },
 
     ageLimit: {
@@ -85,7 +85,12 @@ const jobSchema = new mongoose.Schema(
       type: String,
       enum: ["UPCOMING", "OPEN", "CLOSED"],
       default: "OPEN"
-    }
+    },
+    sourceId: {
+      type: String,
+      unique: true,
+      sparse: true
+    },
   },
   {
     timestamps: true

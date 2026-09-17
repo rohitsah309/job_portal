@@ -11,7 +11,7 @@ const notificationSchema = new mongoose.Schema(
 
         job: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Jobr",
+            ref: "Job",
             required: true
         },
         title: {

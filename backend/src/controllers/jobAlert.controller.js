@@ -1,4 +1,4 @@
-import { success } from "zod";
+
 import JobAlert from "../models/jobAlert.model.js";
 import AppError from "../utils/AppError.js";
 

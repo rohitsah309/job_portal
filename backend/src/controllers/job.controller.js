@@ -123,7 +123,7 @@ export const createJob = async (req, res) => {
       status,
     });
 
-    await createJobNotification(Job);
+    await createJobNotification(newJob);
     res.status(201).json({
       success: true,
       message: "Job created Successfully",
